@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import datetime
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -24,77 +25,75 @@ st.markdown("""
 # --- DADOS DO CRONOGRAMA ---
 if 'cronograma_df' not in st.session_state:
     data_source = [
-    {"Data": "16/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Constitucional", "Temas": "Constitucionalismo; Teoria da Const.; Poder Constituinte.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "16/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Penal Geral", "Temas": "Teoria da Norma; Conflito Aparente; Imunidades; Principios.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "17/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Tributario", "Temas": "Tributo: conceito e especies; Principios I e II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "17/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Ambiental", "Temas": "Introducao; Principios; Const. Ambiental; PNMA e SISNAMA.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "18/02/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Economia Popular; Genocidio; Planejamento Familiar.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "18/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Tributario", "Temas": "Imunidades II; Obrigacao e Fato Gerador; Credito e Lancamento.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "19/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Administrativo", "Temas": "Regime Juridico; Principios; Atos Administrativos I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "19/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Penal Geral", "Temas": "Teoria do Crime: Fato Tipico, Ilicitude e Culpabilidade.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "20/02/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Art. 9 CPM; Intro CP; Contravencoes; Estado Democratico.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "20/02/2026", "Hora": "20h-22h", "Disciplina": "Leis Penais Esp.", "Temas": "Lei de Drogas I/II; Lavagem de Dinheiro I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "21/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Ambiental", "Temas": "Triplice Resp.; Tutela Proc.; Espacos Protegidos; Rec. Hidricos.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "21/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Penal Geral", "Temas": "Erro; Punibilidade; Prescricao; Iter Criminis.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "22/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Tributario", "Temas": "Suspensao/Extincao/Exclusao I/II; Responsabilidade I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "22/02/2026", "Hora": "20h-22h", "Disciplina": "Leg. Especial", "Temas": "Identificacao Pessoal e Crimes do CTB.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "23/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Ambiental", "Temas": "Direito Florestal; Biodiversidade; Crimes Ambientais; Internacional.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "23/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Administrativo", "Temas": "Organizacao Administrativa; Bens Publicos; Poderes.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "24/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Constitucional", "Temas": "Dir. Individuais/Sociais; Remedios; Nacionalidade/Politicos.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "24/02/2026", "Hora": "20h-22h", "Disciplina": "Leis Penais Esp.", "Temas": "Organizacoes Criminosas I/II; Estatuto do Desarmamento I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "25/02/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Esporte; HIV; Prop. Intelectual; Crimes Ordem Tributaria.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "25/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Tributario", "Temas": "Resp. III; Garantias do Credito; Admin. Tributaria; Reforma Trib.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "26/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Ambiental", "Temas": "Mudancas Climaticas; Patrimonio Cultural; Tendencias.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "26/02/2026", "Hora": "20h-22h", "Disciplina": "Leis Penais Esp.", "Temas": "Abuso de Autoridade I/II; Resp. Civil; Crimes Hediondos.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "27/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Constitucional", "Temas": "Controle Constitucionalidade I/II; Federalismo; Competencias.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "27/02/2026", "Hora": "20h-22h", "Disciplina": "Dir. Administrativo", "Temas": "Resp. Civil Estado I/II; Licitacoes e Contratos I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "28/02/2026", "Hora": "12h-14h", "Disciplina": "Dir. Penal Especial", "Temas": "Crimes contra a Vida I/II/III; Lesoes Corporais.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "28/02/2026", "Hora": "20h-22h", "Disciplina": "Leis Penais Esp.", "Temas": "Maria da Penha; ECA; Crimes Ambientais; Interceptacao; Tortura.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "01/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Administrativo", "Temas": "Licitacoes III/IV; Improbidade Administrativa I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "01/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Constitucional", "Temas": "Poder Legislativo; Processo Leg.; Executivo; Judiciario.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "02/03/2026", "Hora": "12h-14h", "Disciplina": "Medicina Legal", "Temas": "Criminalistica I/II; Documentos; Antropologia I.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "02/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Administrativo", "Temas": "Agentes Publicos I/II; Servicos Publicos I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "03/03/2026", "Hora": "12h-14h", "Disciplina": "Medicina Legal", "Temas": "Antropologia II; Traumatologia (Instr. e PAF).", "Concluido": False, "Anotacoes": ""},
-    {"Data": "03/03/2026", "Hora": "20h-22h", "Disciplina": "Leg. Especial", "Temas": "Sistema Unico de Seguranca Publica (SUSP).", "Concluido": False, "Anotacoes": ""},
-    {"Data": "04/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Penal Especial", "Temas": "Honra; Liberdade Individual I/II; Patrimonio I.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "04/03/2026", "Hora": "20h-22h", "Disciplina": "Medicina Legal", "Temas": "Asfixiologia; Temperatura/Eletricidade; Baropatias; Toxicologia I.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "05/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Civil", "Temas": "Pessoa Natural; Direitos da Personalidade I/II/III.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "05/03/2026", "Hora": "20h-22h", "Disciplina": "Medicina Legal", "Temas": "Toxicologia II; Tanatologia; Cronotanatognose I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "06/03/2026", "Hora": "12h-14h", "Disciplina": "Medicina Legal", "Temas": "Sexologia Forense I/II/III.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "06/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Empresarial", "Temas": "Teoria Empresa; Empresario; Estabelecimento; Inst. Complementares.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "07/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P2: Identificacao de comando e Estrutura-padrao.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "07/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Penal Especial", "Temas": "Patrimonio II/III/IV; Dignidade Sexual I/II.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "08/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Penal Especial", "Temas": "Paz Publica; Fe Publica I/II; Administracao I/II/III.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "08/03/2026", "Hora": "20h-22h", "Disciplina": "Prova Discursiva", "Temas": "P2: Padrao CEBRASPE; Coerencia/Coesao.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "09/03/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Convencoes Merida, Palermo, Viena e Pacto San Jose.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "09/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Civil", "Temas": "Bens; Defeitos; Prescricao; Obrigacoes I.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "10/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P2: Questao-modelo (Admin/Const/Jurisprudencia).", "Concluido": False, "Anotacoes": ""},
-    {"Data": "10/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Empresarial", "Temas": "Teoria Societaria; Personificadas; Nao Personificadas; Cooperativa.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "11/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P2: Questao-modelo (Penal/Processo Penal).", "Concluido": False, "Anotacoes": ""},
-    {"Data": "11/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Proc. Penal", "Temas": "Disposicoes Preliminares; Inquerito; ANPP; Acao Penal.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "12/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P3: Identificacao de Peca; Checklist Estrutura.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "12/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Civil", "Temas": "Obrigacoes II; Teoria Geral dos Contratos I/II; Especies.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "13/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P3: Portaria/Despacho; Diligencias Iniciais.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "13/03/2026", "Hora": "20h-22h", "Disciplina": "Leg. Especial", "Temas": "Tribunais Superiores: Informativos Consolidados.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "14/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Empresarial", "Temas": "Limitada; S/A; Operacoes Societarias; Desconsideracao.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "14/03/2026", "Hora": "20h-22h", "Disciplina": "Prova Discursiva", "Temas": "P3: Busca/Apreensao; Cadeia Custodia.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "15/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Humanos", "Temas": "Introducao; Fundamentos; Caracteristicas; Geracoes.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "15/03/2026", "Hora": "20h-22h", "Disciplina": "Prova Discursiva", "Temas": "P3: Interceptacao; Quebra Sigilo; Motivacao.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "16/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Proc. Penal", "Temas": "Denuncia/Queixa; Competencia I/II; Prisao Flagrante.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "16/03/2026", "Hora": "20h-22h", "Disciplina": "Prova Discursiva", "Temas": "P3: Prisao Preventiva; Temporaria; Cautelares.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "17/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Civil", "Temas": "Posse; Usucapiao; Familia; Sucessoes I/II; Resp. Civil.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "17/03/2026", "Hora": "20h-22h", "Disciplina": "Prova Discursiva", "Temas": "P3: Relatorio Final; Indiciamento.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "18/03/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Conhecimentos DF; Politica Mulheres; Primeiros Socorros.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "18/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Humanos", "Temas": "Convencionalidade; DUDH; Pacto Civis.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "19/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P3: Criminalidade Economica; Medidas Patrimoniais.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "19/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Proc. Penal", "Temas": "Preventiva/Domiciliar; Liberdade Provisoria; Temporaria.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "20/03/2026", "Hora": "12h-14h", "Disciplina": "Prova Discursiva", "Temas": "P3: Revisao Pecas; Estrategia de Prova.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "20/03/2026", "Hora": "20h-22h", "Disciplina": "Leg. Especial", "Temas": "Lei Organica Nacional das Policias Civis.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "21/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Empresarial", "Temas": "MEI/ME/EPP; Titulos de Credito; Falencia.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "21/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Humanos", "Temas": "Pacto Sociais; CADH; Comissao IDH.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "22/03/2026", "Hora": "12h-14h", "Disciplina": "Leg. Especial", "Temas": "Regime Disciplinar PF e PCDF (Lei 15.047/2024).", "Concluido": False, "Anotacoes": ""},
-    {"Data": "22/03/2026", "Hora": "20h-22h", "Disciplina": "Dir. Proc. Penal", "Temas": "Comunicacao; Procedimento; Provas; Recursos.", "Concluido": False, "Anotacoes": ""},
-    {"Data": "23/03/2026", "Hora": "12h-14h", "Disciplina": "Dir. Humanos", "Temas": "Corte IDH; Casos Brasil; Povos Tradicionais; Empresas.", "Concluido": False, "Anotacoes": ""}
+    {"Data": "16/02/2026", "Hora": "12h-14h", "Disciplina": "Aula Inaugural / Boas-vindas", "Temas": "Apresentação do coordenador; Boas-vindas; Explicação do formato; Apresentação da carreira.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "21/02/2026", "Hora": "08h-12h", "Disciplina": "Direito Constitucional", "Temas": "Constitucionalismo, Teoria da Constituição e Classificações; Poder Constituinte (Originário, Derivado, Limites, Mutações); Normas Constitucionais e Hermenêutica; Teoria Geral dos Direitos Fundamentais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "21/02/2026", "Hora": "14h-18h", "Disciplina": "Direito Tributário", "Temas": "Tributo: conceito e espécies; Princípios Constitucionais Tributários I; Princípios Constitucionais Tributários II; Imunidades Tributárias I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "22/02/2026", "Hora": "08h-12h", "Disciplina": "Direito Penal Geral", "Temas": "Teoria da Norma Penal; Conflito Aparente de Normas; Imunidades; Princípios do Direito Penal.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "22/02/2026", "Hora": "14h-18h", "Disciplina": "Direito Ambiental", "Temas": "Introdução. Conceito. Objeto. Princípios fundamentais; Direito Constitucional Ambiental; Política Nacional do Meio Ambiente (PNMA) e SISNAMA; Licenciamento Ambiental.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "28/02/2026", "Hora": "08h-12h", "Disciplina": "Legislação Penal Especial", "Temas": "Economia Popular e Genocídio; Planejamento Familiar e Parcelamento do Solo Urbano.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "28/02/2026", "Hora": "14h-18h", "Disciplina": "Direito Tributário", "Temas": "Imunidades Tributárias II; Obrigação Tributária e Fato Gerador; Crédito Tributário e Lançamento Tributário; Suspensão, Extinção e Exclusão do Crédito Tributário I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "01/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Administrativo", "Temas": "Regime jurídico Administrativo/Princípios I; Regime jurídico Administrativo/Princípios II; Atos Administrativos I; Atos Administrativos II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "01/03/2026", "Hora": "14h-18h", "Disciplina": "Direito Penal Geral", "Temas": "Teoria do Crime: Noções Gerais; Teoria do Crime: Fato Típico; Teoria do Crime: Ilicitude; Teoria Geral do Crime: Culpabilidade.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "07/03/2026", "Hora": "08h-12h", "Disciplina": "Legislação Penal Especial", "Temas": "Legislação Penal Especial II (Art. 9º do CPM, Lei de Introdução ao CP e Contravenções); Crimes contra o Estado Democrático de Direito.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "07/03/2026", "Hora": "14h-18h", "Disciplina": "Leis Penais Especiais", "Temas": "Lei de Drogas I; Lei de Drogas II; Lavagem de Dinheiro I; Lavagem de Dinheiro II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "08/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Ambiental", "Temas": "A Tríplice Responsabilidade Ambiental; Tutela Processual do Meio Ambiente; Espaços Territoriais Especialmente Protegidos; Direito dos Recursos Hídricos.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "08/03/2026", "Hora": "14h-18h", "Disciplina": "Direito Penal Geral", "Temas": "Erro; Punibilidade; Prescrição; Iter Criminis.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "14/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Tributário", "Temas": "Suspensão, Extinção e Exclusão do Crédito Tributário II; Suspensão, Extinção e Exclusão do Crédito Tributário III; Responsabilidade Tributária I; Responsabilidade Tributária II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "14/03/2026", "Hora": "14h-18h", "Disciplina": "Legislação Penal Especial", "Temas": "Legislação Penal Especial III (Identificação Pessoal e Crimes do CTB).", "Concluido": False, "Anotacoes": ""},
+    {"Data": "15/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Ambiental", "Temas": "Direito Florestal e Biodiversidade; Direito Ambiental Urbano e Resíduos Sólidos; Crimes Ambientais; Direito Ambiental Internacional.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "15/03/2026", "Hora": "14h-18h", "Disciplina": "Direito Administrativo", "Temas": "Organização Administrativa I; Organização Administrativa II; Bens Públicos; Poderes Administrativos.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "21/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Constitucional", "Temas": "Direitos Individuais e Sociais em Espécie; Remédios Constitucionais; Nacionalidade e Direitos Políticos; Controle de Constitucionalidade - Parte I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "21/03/2026", "Hora": "14h-18h", "Disciplina": "Leis Penais Especiais", "Temas": "Organizações Criminosas I; Organizações Criminosas II; Estatuto do Desarmamento I; Estatuto do Desarmamento II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "22/03/2026", "Hora": "08h-12h", "Disciplina": "Legislação Penal Especial", "Temas": "Legislação Penal Especial IV (Esporte, HIV e Propriedade Intelectual); Crimes contra a ordem tributária.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "22/03/2026", "Hora": "14h-18h", "Disciplina": "Direito Tributário", "Temas": "Responsabilidade Tributária III; Garantias e Privilégios do Crédito Tributário; Administração Tributária; Principais Pontos de IPTU, ITBI, ISS e ITCMD; ICMS e IBS; Reforma Tributária.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "28/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Ambiental", "Temas": "Mudanças Climáticas; Tutela do Patrimônio Cultural; Meio Ambiente e Atividades Econômicas; Atualidades e Tendências.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "28/03/2026", "Hora": "14h-18h", "Disciplina": "Leis Penais Especiais", "Temas": "Abuso de Autoridade I; Abuso de Autoridade II; Responsabilidade Civil do Estado; Lei de Crimes Hediondos.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "29/03/2026", "Hora": "08h-12h", "Disciplina": "Direito Constitucional", "Temas": "Controle de Constitucionalidade - Parte II; Controle de Constitucionalidade - Parte III; Organização do Estado e Federalismo; Repartição de Competências.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "29/03/2026", "Hora": "14h-18h", "Disciplina": "Direito Administrativo", "Temas": "Responsabilidade Civil do Estado I; Responsabilidade Civil do Estado II; Licitações e Contratos I; Licitações e Contratos II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "04/04/2026", "Hora": "08h-12h", "Disciplina": "Direito Penal Parte Especial", "Temas": "Introdução à Parte Especial. Crimes contra a Vida I; Crimes contra a Vida II; Crimes contra a Vida III; Lesões Corporais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "04/04/2026", "Hora": "14h-18h", "Disciplina": "Leis Penais Especiais", "Temas": "Lei Maria da Penha; ECA: Atos Infracionais; ECA: Crimes; Lei de Crimes Ambientais; Lei de Interceptação Telefônica; Lei de Tortura.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "05/04/2026", "Hora": "08h-12h", "Disciplina": "Direito Administrativo", "Temas": "Licitações e Contratos III; Licitações e Contratos IV; Improbidade Administrativa I; Improbidade Administrativa II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "05/04/2026", "Hora": "14h-18h", "Disciplina": "Direito Constitucional", "Temas": "Poder Legislativo; Processo Legislativo; Poder Executivo; Poder Judiciário; Defesa do Estado e Ordem Econômica/Social.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "11/04/2026", "Hora": "08h-12h", "Disciplina": "Medicina Legal", "Temas": "Legislação. Criminalística I; Criminalística II; Documentos Médico-Legais; Antropologia Forense I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "11/04/2026", "Hora": "14h-18h", "Disciplina": "Direito Administrativo", "Temas": "Agentes Públicos I; Agentes Públicos II; Serviços Públicos I; Serviços Públicos II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "12/04/2026", "Hora": "08h-12h", "Disciplina": "Medicina Legal", "Temas": "Antropologia Forense II; Traumatologia Forense: Instrumentos; Ações mistas; PAF.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "12/04/2026", "Hora": "14h-18h", "Disciplina": "Legislação Penal Especial", "Temas": "Sistema Único de Segurança Pública (SUSP).", "Concluido": False, "Anotacoes": ""},
+    {"Data": "18/04/2026", "Hora": "08h-12h", "Disciplina": "Direito Penal Parte Especial", "Temas": "Crimes contra a Honra; Crimes contra a Liberdade Individual I; Crimes contra a Liberdade Individual II; Crimes contra o Patrimônio I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "18/04/2026", "Hora": "14h-18h", "Disciplina": "Medicina Legal", "Temas": "Traumatologia Forense: Asfixiologia; Temperatura e eletricidade; Baropatias; Toxicologia I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "19/04/2026", "Hora": "08h-12h", "Disciplina": "Direito Civil", "Temas": "Pessoa Natural; Direitos da Personalidade I; Direitos da Personalidade II; Direitos da Personalidade III.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "19/04/2026", "Hora": "14h-18h", "Disciplina": "Medicina Legal", "Temas": "Traumatologia Forense: Toxicologia II; Tanatologia Forense; Cronotanatognose I; Cronotanatognose II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "25/04/2026", "Hora": "08h-12h", "Disciplina": "Medicina Legal", "Temas": "Sexologia Forense I; Sexologia Forense II; Sexologia Forense III.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "25/04/2026", "Hora": "14h-18h", "Disciplina": "Direito Empresarial", "Temas": "Direito Comercial: origem e evolução; Empresário; Estabelecimento Empresarial; Institutos Complementares.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "26/04/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 1 — QUESTÕES DISCURSIVAS (P2): Identificação do comando; Estrutura-padrão.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "26/04/2026", "Hora": "14h-18h", "Disciplina": "Direito Penal Parte Especial", "Temas": "Crimes contra o Patrimônio II; Crimes contra o Patrimônio III; Crimes contra o Patrimônio IV; Crimes contra a Dignidade Sexual I; Crimes contra a Dignidade Sexual II.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "02/05/2026", "Hora": "08h-12h", "Disciplina": "Direito Penal Parte Especial", "Temas": "Crimes contra a Paz Pública; Crimes contra a Fé Pública I; Crimes contra a Fé Pública II; Crimes contra a Administração Pública I; Crimes contra a Administração Pública II; Crimes contra a Administração Pública III.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "02/05/2026", "Hora": "14h-18h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 1 — QUESTÕES DISCURSIVAS (P2): Padrão CEBRASPE; Treino guiado.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "03/05/2026", "Hora": "08h-12h", "Disciplina": "Legislação Penal Especial", "Temas": "Convenções de Mérida, Palermo, Viena e Pacto de San José.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "03/05/2026", "Hora": "14h-18h", "Disciplina": "Direito Civil", "Temas": "Bens jurídicos; Defeitos do Negócio Jurídico; Prescrição e Decadência; Direito das Obrigações I.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "09/05/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 1 — QUESTÕES DISCURSIVAS (P2): Questão-modelo (Admin/Constitucional); Recortes funcionais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "09/05/2026", "Hora": "14h-18h", "Disciplina": "Direito Empresarial", "Temas": "Teoria geral do direito societário; Sociedades personificadas; Sociedades não personificadas; Sociedade simples e Cooperativa.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "10/05/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 1 — QUESTÕES DISCURSIVAS (P2): Questão-modelo (Penal/Processo Penal).", "Concluido": False, "Anotacoes": ""},
+    {"Data": "10/05/2026", "Hora": "14h-18h", "Disciplina": "Direito Processual Penal", "Temas": "Disposições preliminares; Inquérito Policial; Acordo de não persecução penal; Ação Penal.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "16/05/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Identificação da peça; Checklist de estrutura.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "16/05/2026", "Hora": "14h-18h", "Disciplina": "Direito Civil", "Temas": "Direito das Obrigações II; Teoria Geral dos Contratos I; Teoria Geral dos Contratos II; Temas de contratos em espécie.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "17/05/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 1: Portaria/Despacho; Diligências iniciais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "17/05/2026", "Hora": "14h-18h", "Disciplina": "Legislação Penal Especial", "Temas": "Tribunais superiores: institutos de Penal/Processo Penal + Constitucional.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "23/05/2026", "Hora": "08h-12h", "Disciplina": "Direito Empresarial", "Temas": "Sociedade limitada; Sociedade anônima; Sociedades coligadas; Transformação, Incorporação, Fusão, Cisão.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "23/05/2026", "Hora": "14h-18h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 2: Representação por busca e apreensão; Cadeia de custódia.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "24/05/2026", "Hora": "08h-12h", "Disciplina": "Direitos Humanos", "Temas": "Introdução aos Direitos Humanos; Fundamentos; Características; Teoria Geracional.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "24/05/2026", "Hora": "14h-18h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 3: Representação por interceptação; Quebra de sigilo.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "30/05/2026", "Hora": "08h-12h", "Disciplina": "Direito Processual Penal", "Temas": "Denúncia e Queixa; Competência I; Competência II; Prisões: Parte geral e prisão em flagrante.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "30/05/2026", "Hora": "14h-18h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 4: Representação por prisão preventiva; Prisão temporária.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "31/05/2026", "Hora": "08h-12h", "Disciplina": "Direito Civil", "Temas": "Direitos Reais: Posse; Direitos Reais: Usucapião e Propriedade; Temas de Direito de Família; Sucessões I; Sucessões II; Responsabilidade Civil.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "31/05/2026", "Hora": "14h-18h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 5: Relatório final de inquérito; Indiciamento.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "06/06/2026", "Hora": "08h-12h", "Disciplina": "Legislação Penal Especial", "Temas": "Unificação: Conhecimentos do DF, Política para Mulheres e Primeiros Socorros.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "06/06/2026", "Hora": "14h-18h", "Disciplina": "Direitos Humanos", "Temas": "Direitos Internacional dos DH; Controle de Convencionalidade; DUDH; Pacto Internacional de Direitos Civis e Políticos.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "07/06/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 6: Criminalidade econômica; Medidas patrimoniais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "07/06/2026", "Hora": "14h-18h", "Disciplina": "Direito Processual Penal", "Temas": "Prisão preventiva e domiciliar; Medidas cautelares diversas; Liberdade provisória; Prisão temporária; Sujeitos processuais.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "13/06/2026", "Hora": "08h-12h", "Disciplina": "Prova Discursiva", "Temas": "MÓDULO 2 — PEÇAS PRÁTICO-PROFISSIONAIS (P3): Peça 7 (Revisão); Fechamento e estratégia.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "13/06/2026", "Hora": "14h-18h", "Disciplina": "Legislação Penal Especial", "Temas": "Lei Orgânica Nacional das Polícias Civis.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "14/06/2026", "Hora": "08h-12h", "Disciplina": "Direito Empresarial", "Temas": "Microempreendedor individual; Títulos de crédito; Recuperação judicial e falência.", "Concluido": False, "Anotacoes": ""},
+    {"Data": "14/06/2026", "Hora": "14h-18h", "Disciplina": "Direitos Humanos", "Temas": "Pacto Internacional de Direitos Econômicos; Sistema Interamericano; Convenção Americana; Comissão Interamericana.", "Concluido": False, "Anotacoes": ""}
     ]
     st.session_state.cronograma_df = pd.DataFrame(data_source)
 
@@ -107,7 +106,7 @@ with st.sidebar:
     # KPIs
     total = len(df)
     feitos = df['Concluido'].sum()
-    progresso = feitos / total
+    progresso = feitos / total if total > 0 else 0
     
     st.metric("Total", total)
     st.metric("Concluídas", feitos)
@@ -167,20 +166,17 @@ st.markdown("---")
 st.subheader("Sessões de Estudo")
 
 for idx, row in df_view.iterrows():
-    # Identificador único para cada linha no session_state
+    # Use index to identify row in full dataframe
     real_index = idx
     
-    # Estilo condicional
     icon = "✅" if row['Concluido'] else "📅"
     
     with st.expander(f"{icon} {row['Data']} | {row['Disciplina']}", expanded=False):
         c1, c2 = st.columns([3, 1])
         
         with c1:
-            # Edição de Data e Hora
             col_d, col_h = st.columns(2)
             
-            # Input de Data (Mantendo formato texto para flexibilidade DD/MM/AAAA)
             new_date = col_d.text_input("Data", value=row['Data'], key=f"d_{real_index}")
             new_time = col_h.text_input("Horário", value=row['Hora'], key=f"h_{real_index}")
             
@@ -192,7 +188,6 @@ for idx, row in df_view.iterrows():
             st.markdown(f"**Tópicos:**")
             st.info(row['Temas'])
             
-            # Anotações
             notes = st.text_area("Anotações:", value=row['Anotacoes'], key=f"n_{real_index}", height=100)
             if notes != row['Anotacoes']:
                 st.session_state.cronograma_df.at[real_index, 'Anotacoes'] = notes
