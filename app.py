@@ -150,7 +150,6 @@ with col1:
 with col2:
     st.subheader("Por Disciplina")
     # Agrupa dados para gráfico de barras
-    # Usando sum() em booleanos para contar True como 1 e False como 0
     df_disc = df.groupby('Disciplina')['Concluido'].sum().reset_index()
     fig_bar = px.bar(
         df_disc, 
@@ -167,12 +166,11 @@ st.markdown("---")
 # --- LISTA DE TAREFAS ---
 st.subheader("Sessões de Estudo")
 
-# Usando iterrows para iterar sobre as linhas filtradas e manter a referência ao índice original
 for idx, row in df_view.iterrows():
-    # O idx é o índice original do dataframe principal
+    # Identificador único para cada linha no session_state
     real_index = idx
     
-    # Estilo condicional do ícone
+    # Estilo condicional
     icon = "✅" if row['Concluido'] else "📅"
     
     with st.expander(f"{icon} {row['Data']} | {row['Disciplina']}", expanded=False):
@@ -182,11 +180,10 @@ for idx, row in df_view.iterrows():
             # Edição de Data e Hora
             col_d, col_h = st.columns(2)
             
-            # Input de Data (Mantendo formato texto para flexibilidade)
+            # Input de Data (Mantendo formato texto para flexibilidade DD/MM/AAAA)
             new_date = col_d.text_input("Data", value=row['Data'], key=f"d_{real_index}")
             new_time = col_h.text_input("Horário", value=row['Hora'], key=f"h_{real_index}")
             
-            # Atualização do Estado se houver mudança
             if new_date != row['Data']:
                 st.session_state.cronograma_df.at[real_index, 'Data'] = new_date
             if new_time != row['Hora']:
@@ -203,7 +200,6 @@ for idx, row in df_view.iterrows():
         with c2:
             st.write("")
             st.write("")
-            # Checkbox de Conclusão
             is_done = st.checkbox("Concluído", value=row['Concluido'], key=f"c_{real_index}")
             if is_done != row['Concluido']:
                 st.session_state.cronograma_df.at[real_index, 'Concluido'] = is_done
