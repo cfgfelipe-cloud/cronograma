@@ -111,4 +111,80 @@ progresso_percentual = (metas_concluidas / total_metas) * 100
 # Título Principal
 st.markdown("# 📅 Cronograma PCDF")
 st.markdown("### Acompanhamento Estratégico - Reta Final")
-st.divider
+st.divider()
+
+# --- DASHBOARD DE PROGRESSO (Header Moderno) ---
+# Usando colunas para criar "cards" de métricas
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric(label="Total de Metas", value=total_metas, delta="Ciclo Teórico")
+with col2:
+    st.metric(label="Concluídas", value=metas_concluidas, delta=f"{metas_concluidas} blocos")
+with col3:
+    st.metric(label="Progresso Geral", value=f"{progresso_percentual:.1f}%")
+
+# --- GRÁFICO DE VELOCÍMETRO (Modernizado) ---
+# Layout de duas colunas: Gráfico à esquerda, Lista à direita
+chart_col, list_col = st.columns([1.5, 3])
+
+with chart_col:
+    st.markdown("#### Desempenho Atual")
+    # Gráfico Plotly com visual mais limpo e cores modernas
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = progresso_percentual,
+        number = {'suffix': "%", 'font': {'size': 40, 'color': "#29B5E8"}},
+        gauge = {
+            'axis': {'range': [0, 100], 'tickwidth': 0, 'tickcolor': "white"}, # Remove ticks
+            'bar': {'color': "#29B5E8", 'thickness': 0.75}, # Cor moderna (Azul claro)
+            'bgcolor': "#EAEAEA", # Fundo cinza claro para contraste
+            'borderwidth': 0,
+            'bordercolor': "white",
+            'steps': [
+                {'range': [0, 100], 'color': '#F0F2F6'} # Fundo sutil
+            ],
+        }
+    ))
+    # Remove margens e fundo do gráfico para um visual "flutuante"
+    fig.update_layout(
+        height=350, 
+        margin=dict(t=20, b=20, l=20, r=20),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font={'family': "Arial, sans-serif"}
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Barra de progresso simples como complemento visual
+    st.progress(progresso_percentual / 100)
+
+
+# --- LISTA DE TAREFAS (Visual Limpo com Ícones) ---
+with list_col:
+    st.markdown("#### Blocos de Estudo")
+    
+    for i, item in enumerate(data_app):
+        # Define o ícone e a cor do status com base na conclusão
+        status_icon = "✅" if st.session_state.concluidos[i] else "⏳"
+        
+        # Expander com título formatado
+        with st.expander(f"{status_icon} {item['Data']} | {item['Disciplina']}"):
+            
+            # Cria colunas internas para organizar a informação dentro do expander
+            info_col, action_col = st.columns([3, 1])
+            
+            with info_col:
+                st.markdown(f"**⏰ Horário:** {item['Hora']}")
+                st.markdown(f"**📚 Temas Programáticos:**")
+                # Formata os temas como uma lista para melhor leitura
+                temas_lista = item['Temas'].replace(';', '\n- ')
+                st.markdown(f"- {temas_lista}")
+                
+            with action_col:
+                st.markdown("##### Status")
+                # Checkbox com chave única para controle de estado
+                st.session_state.concluidos[i] = st.checkbox(
+                    "Concluído", 
+                    value=st.session_state.concluidos[i], 
+                    key=f"check_{i}"
+                )
